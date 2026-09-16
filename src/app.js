@@ -1,4 +1,4 @@
-import { WINDOWS, WINDOW_ORDER, TOLERANCE, EXPORT_QUALITY, EXPORT_FILENAME, GAPS, EXPORT_MARGIN, SKU_FONT_SIZE, SKU_FONT_WEIGHT, SKU_TEXT_COLOR, SKU_GAP } from './config.js';
+import { WINDOWS, WINDOW_ORDER, TOLERANCE, EXPORT_QUALITY, EXPORT_FILENAME, GAPS, EXPORT_MARGIN, SKU_FONT_SIZE, SKU_FONT_WEIGHT, SKU_GAP, EXPORT_BG, EXPORT_BG_DEFAULT } from './config.js';
 import { groupImages } from './group.js';
 
 // ---------- 状态 ----------
@@ -287,12 +287,18 @@ async function downloadPreview() {
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#777777';
+
+    // 读取导出底色选择（灰白色 / 纯黑色），SKU 文字随之黑白反相
+    let bgKey = EXPORT_BG_DEFAULT;
+    document.querySelectorAll('input[name="export-bg"]').forEach((r) => { if (r.checked) bgKey = r.value; });
+    const bgSetting = EXPORT_BG[bgKey] || EXPORT_BG[EXPORT_BG_DEFAULT];
+
+    ctx.fillStyle = bgSetting.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 顶部 SKU 文字：粗体、指定字号、左对齐贴左边距
+    // 顶部 SKU 文字：粗体、指定字号、左对齐贴左边距；颜色随底色自动反转
     if (skuLabel) {
-      ctx.fillStyle = SKU_TEXT_COLOR;
+      ctx.fillStyle = bgSetting.sku;
       ctx.font = `${SKU_FONT_WEIGHT} ${SKU_FONT_SIZE}px "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif`;
       ctx.textBaseline = 'top';
       ctx.textAlign = 'left';
