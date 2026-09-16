@@ -12,7 +12,7 @@
   <body data-page-node-id="ogCGWW0jC1u4hbSLERrDnS">
     <main class="workspace" data-page-node-id="L6wiYATlAumIzQF5hf78Hq">
       <aside class="control-panel" data-page-node-id="tzW0Auc2QQIf79lzUtdtiD">
-        <div class="brand-lockup" data-page-node-id="704BHY3PS4pTAqgTlagcQt"><span class="brand-mark" data-page-node-id="lKl8nlosbLifmCZT65iOZ7"></span><span data-page-node-id="IzE7tHgCwcC9YFGsj0dtoS">LISTING / STUDIO</span></div>
+        <div class="brand-lockup" data-page-node-id="704BHY3PS4pTAqgTlagcQt"><span class="brand-mark" data-page-node-id="lKl8nlosbLifmCZT65iOZ7"></span><span data-page-node-id="IzE7tHgCwcS9YFGsj0dtoS">LISTING / STUDIO</span></div>
         <div class="intro" data-page-node-id="osJUzyg5cP9TibaPWN7YwR">
           <p class="eyebrow" data-page-node-id="jgZx5hRvJjm0QWoU8wyS6d">LOCAL PREVIEWER / 02</p>
           <h1 data-page-node-id="zAjHHkeUTCRsVb8HDHBJ6I">从素材到<br  data-page-node-id="PBVgh0V5Op7fFQc11ueH9Q"/><em data-page-node-id="b3ADZ19u9Ww3k8tGRR5eBB">上架预览。</em></h1>
@@ -23,6 +23,28 @@
         <div class="sku-field">
           <label class="sku-label" for="sku-input">产品 SKU</label>
           <input id="sku-input" class="sku-input" type="text" placeholder="例如 KF20.0029" autocomplete="off" />
+        </div>
+
+        <!-- 导出底色选择：灰白 / 中灰 / 纯黑，SKU 文字随之黑白反相 -->
+        <div class="bg-field">
+          <label class="bg-label">导出底色</label>
+          <div class="bg-options">
+            <label class="bg-option">
+              <input type="radio" name="export-bg" value="light" checked />
+              <span class="bg-swatch bg-light"></span>
+              <span class="bg-text">灰白色</span>
+            </label>
+            <label class="bg-option">
+              <input type="radio" name="export-bg" value="middle" />
+              <span class="bg-swatch bg-middle"></span>
+              <span class="bg-text">中灰色</span>
+            </label>
+            <label class="bg-option">
+              <input type="radio" name="export-bg" value="dark" />
+              <span class="bg-swatch bg-dark"></span>
+              <span class="bg-text">纯黑色</span>
+            </label>
+          </div>
         </div>
 
         <!-- 三个固定类别窗口（data-window 与 config.js 的 WINDOWS 键对应） -->
