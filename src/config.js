@@ -46,5 +46,11 @@ export const EXPORT_MARGIN = 100;
 // 导出图顶部 SKU 文字样式
 export const SKU_FONT_SIZE = 200; // 字号
 export const SKU_FONT_WEIGHT = 700; // 粗体
-export const SKU_TEXT_COLOR = '#111111'; // 文字颜色（叠在灰底 #777777 上）
 export const SKU_GAP = 100; // SKU 与下方内容之间的间距
+
+// 导出底色选项：灰白色 / 纯黑色。SKU 文字随之自动黑白反相。
+export const EXPORT_BG = {
+  light: { bg: '#f2f2f2', sku: '#111111', label: '灰白色 #f2f2f2' }, // 浅底 → 黑字
+  dark: { bg: '#000000', sku: '#ffffff', label: '纯黑色 #000000' }, // 黑底 → 白字
+};
+export const EXPORT_BG_DEFAULT = 'light'; // 默认灰白色 + 黑字
