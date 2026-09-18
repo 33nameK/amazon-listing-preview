@@ -245,26 +245,26 @@ async function downloadPreview() {
     const margin = EXPORT_MARGIN;
     const showW = 1500;
 
+    // 单组布局：多张变体（轮播图）左右并排，单张按原尺寸。整组高取最高张。
+    const groupW = (g) => (g.slides.length === 1
+      ? g.slides[0].width
+      : g.slides.reduce((s, it) => s + it.width, 0) + gA * (g.slides.length - 1));
+    const groupH = (g) => Math.max(...g.slides.map((it) => it.height));
+
     // 先算各段高度，避免事后改动 canvas.height 清空画布
     const showcaseHeight = showcase.reduce((t, it) => t + it.height, 0) + gS * Math.max(0, showcase.length - 1);
 
-    const pcColumnHeight = pcGroups.reduce(
-      (t, g) => t + g.slides.reduce((s, it) => s + it.height, 0) + gA * Math.max(0, g.slides.length - 1),
-      0,
-    );
-    const appColumnHeight = appGroups.reduce(
-      (t, g) => t + g.slides.reduce((s, it) => s + it.height, 0) + gApp * Math.max(0, g.slides.length - 1),
-      0,
-    );
+    const pcColumnHeight = pcGroups.length
+      ? pcGroups.reduce((t, g) => t + groupH(g), 0) + gA * (pcGroups.length - 1)
+      : 0;
+    const appColumnHeight = appGroups.length
+      ? appGroups.reduce((t, g) => t + groupH(g), 0) + gApp * (appGroups.length - 1)
+      : 0;
     // 右列 = A+PC 段 + 段间距 + A+APP 段（橱窗图在左列，互不影响）
     const rightColumnHeight = pcColumnHeight + (appGroups.length ? gSec : 0) + appColumnHeight;
 
-    const pcWidth = pcGroups.length
-      ? Math.max(...pcGroups.flatMap((g) => g.slides.map((it) => it.width)))
-      : 0;
-    const appWidth = appGroups.length
-      ? Math.max(...appGroups.flatMap((g) => g.slides.map((it) => it.width)))
-      : 0;
+    const pcWidth = pcGroups.length ? Math.max(...pcGroups.map(groupW)) : 0;
+    const appWidth = appGroups.length ? Math.max(...appGroups.map(groupW)) : 0;
     const rightColumnWidth = Math.max(pcWidth, appWidth);
 
     // 顶部 SKU 区：有内容才占高度
@@ -312,22 +312,36 @@ async function downloadPreview() {
       y += it.height + gS;
     });
 
-    // A+ PC（右列上部分，按编号无缝竖排；同编号多张变体也逐张竖排）
+    // A+ PC（右列上部分，按编号竖排；同一编号的多张变体左右并排）
     let ay = contentTop;
     pcGroups.forEach((g) => {
-      g.slides.forEach((it) => {
+      if (g.slides.length === 1) {
+        const it = g.slides[0];
         ctx.drawImage(loaded.get(it.id), aplusX, ay, it.width, it.height);
-        ay += it.height + gA;
-      });
+      } else {
+        let gx = aplusX;
+        g.slides.forEach((it) => {
+          ctx.drawImage(loaded.get(it.id), gx, ay, it.width, it.height);
+          gx += it.width + gA;
+        });
+      }
+      ay += groupH(g) + gA;
     });
 
-    // A+ APP（右列下部分，紧接 PC 之后，按编号无缝竖排）
+    // A+ APP（右列下部分，紧接 PC 之后；同一编号多张变体左右并排）
     let by = contentTop + pcColumnHeight + (appGroups.length ? gSec : 0);
     appGroups.forEach((g) => {
-      g.slides.forEach((it) => {
+      if (g.slides.length === 1) {
+        const it = g.slides[0];
         ctx.drawImage(loaded.get(it.id), aplusX, by, it.width, it.height);
-        by += it.height + gApp;
-      });
+      } else {
+        let gx = aplusX;
+        g.slides.forEach((it) => {
+          ctx.drawImage(loaded.get(it.id), gx, by, it.width, it.height);
+          gx += it.width + gA;
+        });
+      }
+      by += groupH(g) + gApp;
     });
 
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', EXPORT_QUALITY));
