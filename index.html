@@ -16,7 +16,7 @@
         <div class="intro" data-page-node-id="osJUzyg5cP9TibaPWN7YwR">
           <p class="eyebrow" data-page-node-id="jgZx5hRvJjm0QWoU8wyS6d">LOCAL PREVIEWER / 02</p>
           <h1 data-page-node-id="zAjHHkeUTCRsVb8HDHBJ6I">从素材到<br  data-page-node-id="PBVgh0V5Op7fFQc11ueH9Q"/><em data-page-node-id="b3ADZ19u9Ww3k8tGRR5eBB">上架预览。</em></h1>
-          <p class="subcopy" data-page-node-id="GKeFs37yACsuMEiMq8sdac">每类尺寸一个窗口，拖进去就行——不靠尺寸猜，差几像素也不丢图。</p>
+          <p class="subcopy" data-page-node-id="GKeFs37yACsuMEiMq8sdac">拖入全部图片，按尺寸自动分到 橱窗 / A+PC / A+APP——差几像素也不丢图。</p>
         </div>
 
         <!-- SKU 输入小栏目（导出 JPG 顶部会带上这个值） -->
@@ -25,7 +25,7 @@
           <input id="sku-input" class="sku-input" type="text" placeholder="例如 KF20.0029" autocomplete="off" />
         </div>
 
-        <!-- 导出底色选择：灰白 / 中灰 / 纯黑，SKU 文字随之黑白反相 -->
+        <!-- 导出底色选择：灰白 / 纯黑，SKU 文字随之黑白反相 -->
         <div class="bg-field">
           <label class="bg-label">导出底色</label>
           <div class="bg-options">
@@ -47,74 +47,32 @@
           </div>
         </div>
 
-        <!-- 三个固定类别窗口（data-window 与 config.js 的 WINDOWS 键对应） -->
-        <section class="source-windows" data-page-node-id="mnEX43S7DPi7fzWldUMpvU">
-          <!-- 窗口① 橱窗 -->
-          <div class="source-window" data-window="showcase" data-page-node-id="NV0HVXEyk6oHwT3SufzzYI">
-            <div class="window-head" data-page-node-id="h0aagCxiLECYnL00D5NJH0">
-              <span class="window-dot dot-orange" data-page-node-id="lLbJOWoGFoWtbZBpkeAy7W"></span>
-              <span class="window-title" data-page-node-id="vOKoi0kRxHleDvjB7La3tD">橱窗 Showcase</span>
-              <span class="window-spec" data-page-node-id="Ep0MXRDDTLzemA2jtHsGgQ">1500 × 1500</span>
+        <!-- 单一上传窗口：拖入全部图片，按尺寸自动分到橱窗 / A+PC / A+APP -->
+        <section class="source-windows">
+          <div class="source-window" data-window="all">
+            <div class="window-head">
+              <span class="window-dot dot-mixed"></span>
+              <span class="window-title">上传全部图片</span>
+              <span class="window-spec">按尺寸自动分类</span>
             </div>
-            <div class="window-drop" data-drop="showcase" data-page-node-id="whck9RIfuvAxdMjDCuFKug">
-              <input type="file" id="file-showcase" accept="image/*" multiple hidden data-page-node-id="IPeHJsqGhKf06c8aBbSZ3F" />
-              <input type="file" id="folder-showcase" accept="image/*" webkitdirectory directory multiple hidden data-page-node-id="cAfrd824zKhOqYQzY4TUG2" />
-              <span class="window-hint" data-page-node-id="2EbyXwufICGssAgVN1XtF9">拖入图片，或</span>
-              <span class="window-actions" data-page-node-id="fBVs3fWUrat0RbIwBJX4lM">
-                <label class="window-choice" for="file-showcase" data-page-node-id="mTehkFusrGXC7O5O5VytOI">选择图片</label>
-                <label class="window-choice" for="folder-showcase" data-page-node-id="hgxcnI5jCMPkpN4HvTuGI3">选择文件夹</label>
+            <div class="window-drop" data-drop="all">
+              <input type="file" id="file-all" accept="image/*" multiple hidden />
+              <input type="file" id="folder-all" accept="image/*" webkitdirectory directory multiple hidden />
+              <span class="window-hint">拖入图片，或</span>
+              <span class="window-actions">
+                <label class="window-choice" for="file-all">选择图片</label>
+                <label class="window-choice" for="folder-all">选择文件夹</label>
               </span>
-              <div class="window-thumbs" id="thumbs-showcase" data-page-node-id="EZXPJtyndUhrNF0Cru8dFI"></div>
+              <div class="window-legend">
+                <span class="legend-item"><i class="dot-orange"></i>橱窗 1500×1500</span>
+                <span class="legend-item"><i class="dot-purple"></i>A+PC 1464×600</span>
+                <span class="legend-item"><i class="dot-blue"></i>A+APP 1200×900</span>
+              </div>
+              <div class="window-thumbs" id="thumbs-all"></div>
             </div>
-            <div class="window-foot" data-page-node-id="KsLpljPU1Eg7V2iAgn6Li2">
-              <span class="window-count" id="count-showcase" data-page-node-id="5f2vLZZGoOzsCSTZ94DrTh">0 IMAGES</span>
-              <button class="window-clear" type="button" data-clear="showcase" data-page-node-id="40GABoNTHt8IBwfOAVSIfx">清空</button>
-            </div>
-          </div>
-
-          <!-- 窗口② A+ PC -->
-          <div class="source-window" data-window="pcAplus" data-page-node-id="yxD6BZltznfV4PrSE5M03C">
-            <div class="window-head" data-page-node-id="W2LtKNLWOTiYO0VAwsvJcD">
-              <span class="window-dot dot-purple" data-page-node-id="Hz9avnhx58A3sc1x1zE8a2"></span>
-              <span class="window-title" data-page-node-id="RP6CclUb4Y84NtCrbcXJ0I">A+ PC</span>
-              <span class="window-spec" data-page-node-id="o2qWHx8GvGDmvOCiwrGtNH">1464 × 600</span>
-            </div>
-            <div class="window-drop" data-drop="pcAplus" data-page-node-id="RaImNuB8ZFUNWIDpDtejXW">
-              <input type="file" id="file-pcAplus" accept="image/*" multiple hidden data-page-node-id="p3ODAP8UPkVcz40GBzlCgG" />
-              <input type="file" id="folder-pcAplus" accept="image/*" webkitdirectory directory multiple hidden data-page-node-id="HeiljwcmHiiOKmDyO0mHYm" />
-              <span class="window-hint" data-page-node-id="ZiTlORT3Ca3kP9F6tmbMcs">拖入图片，或</span>
-              <span class="window-actions" data-page-node-id="2HH6uWBvwFJhyxxecUsGeF">
-                <label class="window-choice" for="file-pcAplus" data-page-node-id="f5h0G88nrXrRFwkCgRrPjV">选择图片</label>
-                <label class="window-choice" for="folder-pcAplus" data-page-node-id="1HDHzQVE1A7CIaFGzRUCSp">选择文件夹</label>
-              </span>
-              <div class="window-thumbs" id="thumbs-pcAplus" data-page-node-id="XK8D2Ea27s7hxzRxfo2y9G"></div>
-            </div>
-            <div class="window-foot" data-page-node-id="tp4ARzi94HD9G4z28YB73L">
-              <span class="window-count" id="count-pcAplus" data-page-node-id="WhcQcA4RsuooJvwvwboIme">0 IMAGES</span>
-              <button class="window-clear" type="button" data-clear="pcAplus" data-page-node-id="E7SuM5otJxPojPdMlDUS2v">清空</button>
-            </div>
-          </div>
-
-          <!-- 窗口③ A+ APP -->
-          <div class="source-window" data-window="appAplus" data-page-node-id="3j88dTpSxBArwSKhKmb71a">
-            <div class="window-head" data-page-node-id="KutYOu5C7Ejw7Y4od3Yr5C">
-              <span class="window-dot dot-blue" data-page-node-id="MO8mB2A8IoEoMspPjc1UOr"></span>
-              <span class="window-title" data-page-node-id="r7mvTIf1DpEUAIP9mE4B79">A+ APP</span>
-              <span class="window-spec" data-page-node-id="9P9ygKaOHDtHXDTAG5ulAr">1200 × 900</span>
-            </div>
-            <div class="window-drop" data-drop="appAplus" data-page-node-id="m893J68lsL0m42nh5pP7Yc">
-              <input type="file" id="file-appAplus" accept="image/*" multiple hidden data-page-node-id="EkGr43RHUQidERkJ7scp7D" />
-              <input type="file" id="folder-appAplus" accept="image/*" webkitdirectory directory multiple hidden data-page-node-id="yGOLFcQ2HcA5WMHW6KYvzK" />
-              <span class="window-hint" data-page-node-id="8RIAANxBtKlq8hVG82Aj4s">拖入图片，或</span>
-              <span class="window-actions" data-page-node-id="mv6DrPLv9pOqWISk0ycjAV">
-                <label class="window-choice" for="file-appAplus" data-page-node-id="AWoGu3y15tfhPfRkFlR5Nv">选择图片</label>
-                <label class="window-choice" for="folder-appAplus" data-page-node-id="LHelDCJBG6DJcjRmmsewrt">选择文件夹</label>
-              </span>
-              <div class="window-thumbs" id="thumbs-appAplus" data-page-node-id="5EtXRAm4G5t6XqCXQ4Ysek"></div>
-            </div>
-            <div class="window-foot" data-page-node-id="xW55asquPp7dPey6M50grz">
-              <span class="window-count" id="count-appAplus" data-page-node-id="Y9mABL54CPCc8IHRtjG8uV">0 IMAGES</span>
-              <button class="window-clear" type="button" data-clear="appAplus" data-page-node-id="5skdfSZsaT9pF1TlKEru3S">清空</button>
+            <div class="window-foot">
+              <span class="window-count" id="count-all">0 IMAGES</span>
+              <button class="window-clear" type="button" data-clear="all">清空</button>
             </div>
           </div>
         </section>
