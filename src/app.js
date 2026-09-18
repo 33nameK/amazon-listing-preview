@@ -26,10 +26,7 @@ function imageNode(item, className = '') {
   return img;
 }
 
-function sizeMismatch(item) {
-  const exp = WINDOWS[item.windowKey].expected;
-  return Math.abs(item.width - exp.w) > TOLERANCE || Math.abs(item.height - exp.h) > TOLERANCE;
-}
+// 自动分类由 classify() 负责（见 addFiles），不再按窗口单独校验尺寸。
 
 function readImage(file, windowKey) {
   return new Promise((resolve) => {
@@ -49,36 +46,78 @@ function readImage(file, windowKey) {
   });
 }
 
-// ---------- 加载 ----------
-async function addFiles(windowKey, fileList) {
+// ---------- 加载：单窗口上传，按尺寸自动分类 ----------
+function classify(item) {
+  for (const key of WINDOW_ORDER) {
+    const exp = WINDOWS[key].expected;
+    if (Math.abs(item.width - exp.w) <= TOLERANCE && Math.abs(item.height - exp.h) <= TOLERANCE) {
+      return key;
+    }
+  }
+  return null; // 不匹配任何一类
+}
+
+function flashNotice(msg) {
+  let el = document.querySelector('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b1e25;color:#e8eaed;border:1px solid #2a2e37;padding:10px 16px;border-radius:10px;font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;transition:opacity .2s;pointer-events:none;';
+    document.body.append(el);
+  }
+  el.textContent = msg;
+  requestAnimationFrame(() => { el.style.opacity = '1'; });
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 2800);
+}
+
+async function addFiles(fileList) {
   const incoming = [...fileList].filter((f) => f.type.startsWith('image/'));
-  const loaded = (await Promise.all(incoming.map((f) => readImage(f, windowKey)))).filter(Boolean);
-  const existingIds = new Set(stores[windowKey].map((it) => it.id));
+  const loaded = (await Promise.all(incoming.map((f) => readImage(f, null)))).filter(Boolean);
+  const existingIds = new Set([
+    ...stores.showcase, ...stores.pcAplus, ...stores.appAplus,
+  ].map((it) => it.id));
   const fresh = loaded.filter((it) => !existingIds.has(it.id)); // 去重，避免重复添加
-  stores[windowKey].push(...fresh);
+
+  const unrecognized = [];
+  fresh.forEach((it) => {
+    const key = classify(it);
+    if (key) {
+      it.windowKey = key;
+      stores[key].push(it);
+    } else {
+      unrecognized.push(it);
+    }
+  });
+
+  if (unrecognized.length) {
+    flashNotice(`已忽略 ${unrecognized.length} 张：尺寸不匹配（需 1500×1500 / 1464×600 / 1200×900）`);
+  }
   render();
 }
 
-// ---------- 渲染：窗口缩略图 ----------
-function renderWindow(key) {
-  const store = stores[key];
-  const thumbsEl = document.querySelector(`#thumbs-${key}`);
-  const countEl = document.querySelector(`#count-${key}`);
-  const exp = WINDOWS[key].expected;
+// ---------- 渲染：单窗口缩略图（带分类角标） ----------
+const CAT_VAR = { showcase: 'orange', pcAplus: 'purple', appAplus: 'blue' };
+const CAT_NAME = { showcase: '橱窗 Showcase', pcAplus: 'A+ PC', appAplus: 'A+ APP' };
 
-  countEl.textContent = `${store.length} IMAGES`;
+function renderAll() {
+  const thumbsEl = document.querySelector('#thumbs-all');
+  const countEl = document.querySelector('#count-all');
+  const entries = [
+    ...stores.showcase.map((it) => ({ it, key: 'showcase' })),
+    ...stores.pcAplus.map((it) => ({ it, key: 'pcAplus' })),
+    ...stores.appAplus.map((it) => ({ it, key: 'appAplus' })),
+  ];
+  countEl.textContent = `${entries.length} IMAGES · 橱窗${stores.showcase.length} / PC${stores.pcAplus.length} / APP${stores.appAplus.length}`;
   thumbsEl.replaceChildren();
-  store.forEach((it) => {
+  entries.forEach(({ it, key }) => {
     const cell = document.createElement('div');
     cell.className = 'window-thumb';
     cell.append(imageNode(it));
-    if (sizeMismatch(it)) {
-      const warn = document.createElement('span');
-      warn.className = 'size-warn';
-      warn.textContent = '!';
-      warn.title = `尺寸 ${it.width}×${it.height} 与预期 ${exp.w}×${exp.h} 偏差较大，请确认是否放错窗口`;
-      cell.append(warn);
-    }
+    const badge = document.createElement('span');
+    badge.className = `cat-badge dot-${CAT_VAR[key]}`;
+    badge.title = CAT_NAME[key];
+    cell.append(badge);
     thumbsEl.append(cell);
   });
 }
@@ -184,15 +223,18 @@ function renderPreview() {
 }
 
 function render() {
-  WINDOW_ORDER.forEach(renderWindow);
+  renderAll();
   renderPreview();
 }
 
 // ---------- 清空 ----------
 function clearWindow(key) {
-  stores[key].forEach((it) => URL.revokeObjectURL(it.url));
-  stores[key] = [];
-  if (key === 'showcase') selectedShowcaseId = null;
+  const keys = key === 'all' ? WINDOW_ORDER : [key];
+  keys.forEach((k) => {
+    stores[k].forEach((it) => URL.revokeObjectURL(it.url));
+    stores[k] = [];
+  });
+  if (keys.includes('showcase')) selectedShowcaseId = null;
   render();
 }
 
@@ -203,10 +245,8 @@ function clearAll() {
   });
   selectedShowcaseId = null;
   carouselSelections.clear();
-  WINDOW_ORDER.forEach((key) => {
-    document.querySelector(`#file-${key}`).value = '';
-    document.querySelector(`#folder-${key}`).value = '';
-  });
+  document.querySelector('#file-all').value = '';
+  document.querySelector('#folder-all').value = '';
   render();
 }
 
@@ -357,26 +397,26 @@ async function downloadPreview() {
   }
 }
 
-// ---------- 事件绑定 ----------
-WINDOW_ORDER.forEach((key) => {
-  const drop = document.querySelector(`[data-drop="${key}"]`);
-  const fileInput = document.querySelector(`#file-${key}`);
-  const folderInput = document.querySelector(`#folder-${key}`);
+// ---------- 事件绑定：单窗口上传 ----------
+(function bindUpload() {
+  const drop = document.querySelector('[data-drop="all"]');
+  const fileInput = document.querySelector('#file-all');
+  const folderInput = document.querySelector('#folder-all');
 
-  fileInput.addEventListener('change', (e) => { addFiles(key, e.target.files); e.target.value = ''; });
-  folderInput.addEventListener('change', (e) => { addFiles(key, e.target.files); e.target.value = ''; });
+  fileInput.addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
+  folderInput.addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
 
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('is-dragging'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('is-dragging'));
   drop.addEventListener('drop', (e) => {
     e.preventDefault();
     drop.classList.remove('is-dragging');
-    addFiles(key, e.dataTransfer.files);
+    addFiles(e.dataTransfer.files);
   });
   drop.addEventListener('click', (e) => {
     if (e.target === drop || e.target.classList.contains('window-hint')) fileInput.click();
   });
-});
+})();
 
 document.querySelectorAll('[data-clear]').forEach((btn) => {
   btn.addEventListener('click', () => clearWindow(btn.dataset.clear));
