@@ -5,19 +5,23 @@ export const WINDOWS = {
   showcase: {
     key: 'showcase',
     label: '橱窗 Showcase',
-    expected: { w: 1500, h: 1500 },
+    // 接受的尺寸（数组顺序即排版顺序：1500×1500 排第一，1200×1500 随后）
+    accepted: [
+      { w: 1500, h: 1500 },
+      { w: 1200, h: 1500 },
+    ],
     colorVar: 'orange',
   },
   pcAplus: {
     key: 'pcAplus',
     label: 'A+ PC',
-    expected: { w: 1464, h: 600 },
+    accepted: [{ w: 1464, h: 600 }],
     colorVar: 'purple',
   },
   appAplus: {
     key: 'appAplus',
     label: 'A+ APP',
-    expected: { w: 1200, h: 900 },
+    accepted: [{ w: 1200, h: 900 }],
     colorVar: 'blue',
   },
 };
