@@ -47,14 +47,22 @@ function readImage(file, windowKey) {
 }
 
 // ---------- 加载：单窗口上传，按尺寸自动分类 ----------
+function sizeMatch(item, s) {
+  return Math.abs(item.width - s.w) <= TOLERANCE && Math.abs(item.height - s.h) <= TOLERANCE;
+}
+
 function classify(item) {
   for (const key of WINDOW_ORDER) {
-    const exp = WINDOWS[key].expected;
-    if (Math.abs(item.width - exp.w) <= TOLERANCE && Math.abs(item.height - exp.h) <= TOLERANCE) {
-      return key;
-    }
+    if (WINDOWS[key].accepted.some((s) => sizeMatch(item, s))) return key;
   }
   return null; // 不匹配任何一类
+}
+
+// 橱窗排版顺序：accepted[0]（1500×1500）排第一，其余按数组顺序。
+function showcaseOrderKey(it) {
+  const accepted = WINDOWS.showcase.accepted;
+  const idx = accepted.findIndex((s) => sizeMatch(it, s));
+  return idx === -1 ? accepted.length : idx;
 }
 
 function flashNotice(msg) {
@@ -90,8 +98,13 @@ async function addFiles(fileList) {
     }
   });
 
+  // 橱窗按尺寸排序：1500×1500 在前，1200×1500 在后（同尺寸保持拖入顺序）
+  if (stores.showcase.length) {
+    stores.showcase.sort((a, b) => showcaseOrderKey(a) - showcaseOrderKey(b));
+  }
+
   if (unrecognized.length) {
-    flashNotice(`已忽略 ${unrecognized.length} 张：尺寸不匹配（需 1500×1500 / 1464×600 / 1200×900）`);
+    flashNotice(`已忽略 ${unrecognized.length} 张：尺寸不匹配（需 1500×1500 / 1200×1500 / 1464×600 / 1200×900）`);
   }
   render();
 }
